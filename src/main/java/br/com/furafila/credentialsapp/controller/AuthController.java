@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.furafila.credentialsapp.controller.resource.LoginResource;
-import br.com.furafila.credentialsapp.dto.CredentialsDTO;
+import br.com.furafila.credentialsapp.controller.resource.AuthResource;
+import br.com.furafila.credentialsapp.dto.CredentialDTO;
 import br.com.furafila.credentialsapp.response.LoginResponse;
 import br.com.furafila.credentialsapp.service.CredentialsService;
 
 @RestController
-@RequestMapping("v1/validate-credentials")
-public class LoginController implements LoginResource {
+@RequestMapping("auth")
+public class AuthController implements AuthResource {
 
 	@Autowired
 	private CredentialsService credentialsService;
@@ -25,7 +25,7 @@ public class LoginController implements LoginResource {
 	public ResponseEntity<LoginResponse> validateCredentials(@RequestParam("username") String username,
 			@RequestParam("password") String password) {
 
-		CredentialsDTO credentialsValidated = credentialsService.validateCredentials(username, password);
+		CredentialDTO credentialsValidated = credentialsService.validateCredentials(username, password);
 		return ResponseEntity.ok(new LoginResponse(credentialsValidated));
 	}
 

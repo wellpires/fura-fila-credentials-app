@@ -6,22 +6,23 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter
-public class Bit2BooleanConverter implements AttributeConverter<Integer, Boolean> {
+public class Bit2BooleanConverter implements AttributeConverter<Boolean, Integer> {
 
 	@Override
-	public Boolean convertToDatabaseColumn(Integer attribute) {
-		return Objects.nonNull(attribute) && attribute == 1;
-	}
-
-	@Override
-	public Integer convertToEntityAttribute(Boolean dbData) {
+	public Integer convertToDatabaseColumn(Boolean attribute) {
 
 		Integer attributeValue = 0;
-		if (Objects.nonNull(dbData) && dbData) {
+		if (Objects.nonNull(attribute) && attribute) {
 			attributeValue = 1;
 		}
 
 		return attributeValue;
+
+	}
+
+	@Override
+	public Boolean convertToEntityAttribute(Integer dbData) {
+		return Objects.nonNull(dbData) && dbData == 1;
 	}
 
 }

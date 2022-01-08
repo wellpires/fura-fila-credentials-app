@@ -2,23 +2,23 @@ package br.com.furafila.credentialsapp.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import br.com.furafila.credentialsapp.dto.CredentialsDTO;
+import br.com.furafila.credentialsapp.dto.CredentialDTO;
 
 public class LoginResponse {
 
-	@JsonProperty("credentials")
-	private CredentialsDTO credentialsDTO;
+	@JsonProperty("credential")
+	private CredentialDTO credentialDTO;
 
-	public LoginResponse(CredentialsDTO credentialsDTO) {
-		this.credentialsDTO = credentialsDTO;
+	public LoginResponse(CredentialDTO credentialsDTO) {
+		this.credentialDTO = credentialsDTO;
 	}
 
-	public CredentialsDTO getCredentialsDTO() {
-		return credentialsDTO;
+	public CredentialDTO getCredentialDTO() {
+		return credentialDTO;
 	}
 
-	public void setCredentialsDTO(CredentialsDTO credentialsDTO) {
-		this.credentialsDTO = credentialsDTO;
+	public void setCredentialDTO(CredentialDTO credentialDTO) {
+		this.credentialDTO = credentialDTO;
 	}
 
 }

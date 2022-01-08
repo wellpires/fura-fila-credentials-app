@@ -34,10 +34,11 @@ public class Login implements Serializable {
 
 	@Column(name = "status", columnDefinition = "int4")
 	@Convert(converter = Bit2BooleanConverter.class)
-	private Integer status;
+	private Boolean status;
 
-	@Column(name = "disponivel_entrega")
-	private Integer deliveryAvailable;
+	@Column(name = "disponivel_entrega", columnDefinition = "int4")
+	@Convert(converter = Bit2BooleanConverter.class)
+	private Boolean deliveryAvailable;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_permissao_fk", referencedColumnName = "id_permissao", columnDefinition = "int4")
@@ -67,19 +68,19 @@ public class Login implements Serializable {
 		this.password = password;
 	}
 
-	public Integer getStatus() {
+	public Boolean getStatus() {
 		return status;
 	}
 
-	public void setStatus(Integer status) {
+	public void setStatus(Boolean status) {
 		this.status = status;
 	}
 
-	public Integer getDeliveryAvailable() {
+	public Boolean getDeliveryAvailable() {
 		return deliveryAvailable;
 	}
 
-	public void setDeliveryAvailable(Integer deliveryAvailable) {
+	public void setDeliveryAvailable(Boolean deliveryAvailable) {
 		this.deliveryAvailable = deliveryAvailable;
 	}
 

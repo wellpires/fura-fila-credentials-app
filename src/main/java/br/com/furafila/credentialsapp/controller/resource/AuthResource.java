@@ -4,9 +4,7 @@ import org.springframework.http.ResponseEntity;
 
 import br.com.furafila.credentialsapp.response.LoginResponse;
 
-public interface LoginResource {
-	
+public interface AuthResource {
+
 	public ResponseEntity<LoginResponse> validateCredentials(String username, String password);
-	
-	
 }

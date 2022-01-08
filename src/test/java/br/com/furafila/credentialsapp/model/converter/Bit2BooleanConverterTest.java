@@ -12,67 +12,67 @@ public class Bit2BooleanConverterTest {
 	@Test
 	public void shouldReturnTrueIfAttributeIsOne() {
 
-		AttributeConverter<Integer, Boolean> converter = new Bit2BooleanConverter();
+		AttributeConverter<Boolean, Integer> converter = new Bit2BooleanConverter();
 
-		Boolean columnValue = converter.convertToDatabaseColumn(1);
+		Integer attributeValue = converter.convertToDatabaseColumn(Boolean.TRUE);
 
-		Assertions.assertTrue(columnValue);
+		Assertions.assertEquals(attributeValue, 1);
 
 	}
 
 	@Test
 	public void shouldReturnFalseIfAttributeIsZero() {
 
-		AttributeConverter<Integer, Boolean> converter = new Bit2BooleanConverter();
+		AttributeConverter<Boolean, Integer> converter = new Bit2BooleanConverter();
 
-		Boolean columnValue = converter.convertToDatabaseColumn(0);
+		Integer attributeValue = converter.convertToDatabaseColumn(Boolean.FALSE);
 
-		Assertions.assertFalse(columnValue);
+		Assertions.assertEquals(attributeValue, 0);
 
 	}
 
 	@Test
 	public void shouldReturnFalseIfAttributeIsNull() {
 
-		AttributeConverter<Integer, Boolean> converter = new Bit2BooleanConverter();
+		AttributeConverter<Boolean, Integer> converter = new Bit2BooleanConverter();
 
-		Boolean columnValue = converter.convertToDatabaseColumn(null);
+		Integer attributeValue = converter.convertToDatabaseColumn(null);
 
-		Assertions.assertFalse(columnValue);
+		Assertions.assertEquals(attributeValue, 0);
 
 	}
 
 	@Test
 	public void shouldReturnOneIfDatabaseColumnValueIsTrue() {
 
-		AttributeConverter<Integer, Boolean> converter = new Bit2BooleanConverter();
+		AttributeConverter<Boolean, Integer> converter = new Bit2BooleanConverter();
 
-		Integer attributeValue = converter.convertToEntityAttribute(Boolean.TRUE);
+		Boolean columnValue = converter.convertToEntityAttribute(1);
 
-		Assertions.assertEquals(attributeValue, 1);
+		Assertions.assertTrue(columnValue);
 
-	}	
-	
+	}
+
 	@Test
 	public void shouldReturnZeroIfDatabaseColumnValueIsNull() {
 
-		AttributeConverter<Integer, Boolean> converter = new Bit2BooleanConverter();
+		AttributeConverter<Boolean, Integer> converter = new Bit2BooleanConverter();
 
-		Integer attributeValue = converter.convertToEntityAttribute(null);
+		Boolean columnValue = converter.convertToEntityAttribute(null);
 
-		Assertions.assertEquals(attributeValue, 0);
+		Assertions.assertFalse(columnValue);
 
 	}
-	
+
 	@Test
 	public void shouldReturnZeroIfDatabaseColumnValueIsFalse() {
 
-		AttributeConverter<Integer, Boolean> converter = new Bit2BooleanConverter();
+		AttributeConverter<Boolean, Integer> converter = new Bit2BooleanConverter();
 
-		Integer attributeValue = converter.convertToEntityAttribute(Boolean.FALSE);
+		Boolean columnValue = converter.convertToEntityAttribute(0);
 
-		Assertions.assertEquals(attributeValue, 0);
+		Assertions.assertFalse(columnValue);
 
 	}
-	
+
 }

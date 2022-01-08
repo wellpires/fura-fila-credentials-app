@@ -1,6 +1,6 @@
 package br.com.furafila.credentialsapp.dto;
 
-public class CredentialsDTO {
+public class CredentialDTO {
 
 	private Long id;
 	private String username;

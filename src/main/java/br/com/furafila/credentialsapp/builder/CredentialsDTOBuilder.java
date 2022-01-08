@@ -1,6 +1,6 @@
-package br.com.furafila.credentialsapp.build;
+package br.com.furafila.credentialsapp.builder;
 
-import br.com.furafila.credentialsapp.dto.CredentialsDTO;
+import br.com.furafila.credentialsapp.dto.CredentialDTO;
 
 public class CredentialsDTOBuilder {
 
@@ -41,8 +41,8 @@ public class CredentialsDTOBuilder {
 		return this;
 	}
 
-	public CredentialsDTO build() {
-		CredentialsDTO credentialsDTO = new CredentialsDTO();
+	public CredentialDTO build() {
+		CredentialDTO credentialsDTO = new CredentialDTO();
 		credentialsDTO.setId(idLogin);
 		credentialsDTO.setUsername(username);
 		credentialsDTO.setPassword(password);
