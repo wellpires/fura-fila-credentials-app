@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.furafila.credentialsapp.controller.resource.CredentialResource;
 import br.com.furafila.credentialsapp.dto.CourierDTO;
+import br.com.furafila.credentialsapp.request.NewCredentialRequest;
 import br.com.furafila.credentialsapp.response.CouriersResponse;
 import br.com.furafila.credentialsapp.response.CredentialDuplicityResponse;
 import br.com.furafila.credentialsapp.service.CredentialsService;
@@ -41,6 +42,14 @@ public class CredentialController implements CredentialResource {
 		List<CourierDTO> couriers = credentialsService.listAllCouriers();
 					
 		return ResponseEntity.ok(new CouriersResponse(couriers));
+	}
+
+	@Override
+	public ResponseEntity<Void> saveCredential(NewCredentialRequest newCredentialRequest) {
+		
+//		credentialsService.saveCredential(newCredentialRequest)
+		
+		return null;
 	}
 
 }
