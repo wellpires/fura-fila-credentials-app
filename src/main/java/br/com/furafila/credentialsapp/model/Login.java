@@ -40,7 +40,7 @@ public class Login implements Serializable {
 	@Convert(converter = Bit2BooleanConverter.class)
 	private Boolean deliveryAvailable;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "id_permissao_fk", referencedColumnName = "id_permissao", columnDefinition = "int4")
 	private Permissao permissao;
 

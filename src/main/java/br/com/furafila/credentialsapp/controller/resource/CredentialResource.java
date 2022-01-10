@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import br.com.furafila.credentialsapp.request.NewCredentialRequest;
 import br.com.furafila.credentialsapp.response.CouriersResponse;
 import br.com.furafila.credentialsapp.response.CredentialDuplicityResponse;
+import br.com.furafila.credentialsapp.response.NewLoginResponse;
 
 public interface CredentialResource {
 
@@ -12,6 +13,6 @@ public interface CredentialResource {
 
 	public ResponseEntity<CouriersResponse> listCouriers();
 	
-	public ResponseEntity<Void> saveCredential(NewCredentialRequest newCredentialRequest);
+	public ResponseEntity<NewLoginResponse> saveCredential(NewCredentialRequest newCredentialRequest);
 	
 }

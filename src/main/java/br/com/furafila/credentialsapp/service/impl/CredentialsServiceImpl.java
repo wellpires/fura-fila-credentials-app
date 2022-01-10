@@ -10,9 +10,11 @@ import org.springframework.util.CollectionUtils;
 import br.com.furafila.credentialsapp.builder.CredentialsDTOBuilder;
 import br.com.furafila.credentialsapp.dto.CourierDTO;
 import br.com.furafila.credentialsapp.dto.CredentialDTO;
+import br.com.furafila.credentialsapp.dto.NewCredentialDTO;
 import br.com.furafila.credentialsapp.exception.CredentialsNotFoundException;
 import br.com.furafila.credentialsapp.function.Login2CouriersDTOFunction;
 import br.com.furafila.credentialsapp.model.Login;
+import br.com.furafila.credentialsapp.model.Permissao;
 import br.com.furafila.credentialsapp.repository.CredentialsRepository;
 import br.com.furafila.credentialsapp.service.CredentialsService;
 
@@ -64,6 +66,25 @@ public class CredentialsServiceImpl implements CredentialsService {
 		List<Login> couriers = credentialsRepository.findAllCouriers("E");
 
 		return couriers.stream().map(new Login2CouriersDTOFunction()).collect(Collectors.toList());
+	}
+
+	@Override
+	public Long saveCredential(NewCredentialDTO newCredentialDTO) {
+
+		Login login = new Login();
+		login.setUsername(newCredentialDTO.getUsername());
+		login.setPassword(newCredentialDTO.getPassword());
+		login.setDeliveryAvailable(newCredentialDTO.getDeliveryAvailable());
+		login.setStatus(newCredentialDTO.getStatus());
+
+		Permissao permissao = new Permissao();
+		permissao.setId(newCredentialDTO.getLevelId());
+
+		login.setPermissao(permissao);
+
+		Login newLogin = credentialsRepository.save(login);
+
+		return newLogin.getId();
 	}
 
 }

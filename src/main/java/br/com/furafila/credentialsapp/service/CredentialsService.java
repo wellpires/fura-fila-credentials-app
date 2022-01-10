@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.furafila.credentialsapp.dto.CourierDTO;
 import br.com.furafila.credentialsapp.dto.CredentialDTO;
+import br.com.furafila.credentialsapp.dto.NewCredentialDTO;
 
 public interface CredentialsService {
 
@@ -12,5 +13,7 @@ public interface CredentialsService {
 	public Boolean checkCredentialsDuplicity(Long id, String username, Boolean include);
 
 	public List<CourierDTO> listAllCouriers();
+
+	public Long saveCredential(NewCredentialDTO newCredentialDTO);
 	
 }
