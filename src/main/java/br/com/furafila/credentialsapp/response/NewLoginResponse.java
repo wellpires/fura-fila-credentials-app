@@ -4,6 +4,9 @@ public class NewLoginResponse {
 
 	private Long id;
 
+	public NewLoginResponse() {
+	}
+
 	public NewLoginResponse(Long id) {
 		this.id = id;
 	}

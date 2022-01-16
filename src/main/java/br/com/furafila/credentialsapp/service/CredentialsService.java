@@ -10,7 +10,7 @@ public interface CredentialsService {
 
 	public CredentialDTO validateCredentials(String username, String password);
 
-	public Boolean checkCredentialsDuplicity(Long id, String username, Boolean include);
+	public boolean checkCredentialsDuplicity(Long id, String username, Boolean include);
 
 	public List<CourierDTO> listAllCouriers();
 

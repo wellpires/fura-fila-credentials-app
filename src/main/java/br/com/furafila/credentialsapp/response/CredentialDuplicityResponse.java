@@ -4,6 +4,9 @@ public class CredentialDuplicityResponse {
 
 	private Boolean isCredentialExist;
 
+	public CredentialDuplicityResponse() {
+	}
+
 	public CredentialDuplicityResponse(Boolean isCredentialExist) {
 		this.isCredentialExist = isCredentialExist;
 	}

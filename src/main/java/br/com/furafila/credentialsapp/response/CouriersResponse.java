@@ -11,6 +11,9 @@ public class CouriersResponse {
 	@JsonProperty("couriers")
 	private List<CourierDTO> couriersDTO;
 
+	public CouriersResponse() {
+	}
+
 	public CouriersResponse(List<CourierDTO> couriers) {
 		couriersDTO = couriers;
 	}

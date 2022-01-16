@@ -3,10 +3,8 @@ package br.com.furafila.credentialsapp.model.converter;
 import javax.persistence.AttributeConverter;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@Nested
 public class Bit2BooleanConverterTest {
 
 	@Test

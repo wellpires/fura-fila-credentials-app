@@ -31,9 +31,10 @@ public class CredentialController implements CredentialResource {
 	@Override
 	@GetMapping(path = "id/{id}/username/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<CredentialDuplicityResponse> checkCredentialsDuplicity(@PathVariable("id") Long id,
-			@PathVariable("username") String username, @RequestParam("include") Boolean include) {
+			@PathVariable("username") String username,
+			@RequestParam(value = "include", defaultValue = "false") Boolean include) {
 
-		Boolean credentialsExists = credentialsService.checkCredentialsDuplicity(id, username, include);
+		boolean credentialsExists = credentialsService.checkCredentialsDuplicity(id, username, include);
 
 		return ResponseEntity.ok(new CredentialDuplicityResponse(credentialsExists));
 	}

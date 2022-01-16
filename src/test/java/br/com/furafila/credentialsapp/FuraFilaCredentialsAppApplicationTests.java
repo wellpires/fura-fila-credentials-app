@@ -1,6 +1,5 @@
 package br.com.furafila.credentialsapp;
 
-class FuraFilaCredentialsAppApplicationTests {
-
+public class FuraFilaCredentialsAppApplicationTests {
 
 }

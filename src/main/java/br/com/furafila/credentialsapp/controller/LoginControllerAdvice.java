@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import br.com.furafila.credentialsapp.exception.CredentialNotAuthorizedException;
 import br.com.furafila.credentialsapp.exception.CredentialsNotFoundException;
 import br.com.furafila.credentialsapp.response.ErrorResponse;
 
@@ -29,6 +30,12 @@ public class LoginControllerAdvice {
 	public ResponseEntity<ErrorResponse> handleCredentialNotFound(CredentialsNotFoundException cnfEx) {
 		logger.error(cnfEx.getMessage(), cnfEx);
 		return ResponseEntity.notFound().build();
+	}
+
+	@ExceptionHandler(CredentialNotAuthorizedException.class)
+	public ResponseEntity<ErrorResponse> handleCredentialNotAuthorized(CredentialNotAuthorizedException cnex) {
+		logger.error(cnex.getMessage(), cnex);
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(cnex.getMessage()));
 	}
 
 }

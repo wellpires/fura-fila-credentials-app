@@ -9,6 +9,9 @@ public class LoginResponse {
 	@JsonProperty("credential")
 	private CredentialDTO credentialDTO;
 
+	public LoginResponse() {
+	}
+
 	public LoginResponse(CredentialDTO credentialsDTO) {
 		this.credentialDTO = credentialsDTO;
 	}
