@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -36,6 +37,15 @@ public class LoginControllerAdvice {
 	public ResponseEntity<ErrorResponse> handleCredentialNotAuthorized(CredentialNotAuthorizedException cnex) {
 		logger.error(cnex.getMessage(), cnex);
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(cnex.getMessage()));
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException maEx) {
+
+		String defaultMessage = maEx.getBindingResult().getFieldError().getDefaultMessage();
+		logger.error(defaultMessage, maEx.getBindingResult().getFieldError());
+
+		return ResponseEntity.badRequest().body(new ErrorResponse(defaultMessage));
 	}
 
 }

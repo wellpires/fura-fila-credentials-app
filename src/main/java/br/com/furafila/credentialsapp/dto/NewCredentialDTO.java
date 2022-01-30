@@ -1,11 +1,34 @@
 package br.com.furafila.credentialsapp.dto;
 
+import javax.validation.GroupSequence;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import br.com.furafila.credentialsapp.util.Messages;
+import br.com.furafila.credentialsapp.validation.order.FirstOrder;
+import br.com.furafila.credentialsapp.validation.order.SecondOrder;
+
+@GroupSequence({ NewCredentialDTO.class, FirstOrder.class, SecondOrder.class })
 public class NewCredentialDTO {
 
+	@NotBlank(message = Messages.USERNAME_IS_REQUIRED, groups = FirstOrder.class)
+	@Size(min = 4, max = 50, message = Messages.USERNAME_LENGTH_IS_NOT_VALID, groups = SecondOrder.class)
 	private String username;
+
+	@NotBlank(message = Messages.PASSWORD_IS_REQUIRED, groups = FirstOrder.class)
+	@Size(min = 8, max = 32, message = Messages.PASSWORD_LENGTH_IS_NOT_VALID, groups = SecondOrder.class)
 	private String password;
+
+	@NotNull(message = Messages.STATUS_IS_REQUIRED)
 	private Boolean status;
+
+	@NotNull(message = Messages.DELIVERY_AVAILABLE_IS_REQUIRED)
 	private Boolean deliveryAvailable;
+
+	@NotNull(message = Messages.LEVEL_ID_IS_REQUIRED, groups = FirstOrder.class)
+	@DecimalMin(value = "1", message = Messages.LEVEL_ID_IS_NOT_VALID, groups = SecondOrder.class)
 	private Long levelId;
 
 	public String getUsername() {

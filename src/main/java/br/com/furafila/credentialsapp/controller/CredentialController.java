@@ -2,6 +2,8 @@ package br.com.furafila.credentialsapp.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +52,7 @@ public class CredentialController implements CredentialResource {
 
 	@Override
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<NewLoginResponse> saveCredential(@RequestBody NewCredentialRequest newCredentialRequest) {
+	public ResponseEntity<NewLoginResponse> saveCredential(@RequestBody @Valid NewCredentialRequest newCredentialRequest) {
 
 		Long idLogin = credentialsService.saveCredential(newCredentialRequest.getNewCredentialDTO());
 

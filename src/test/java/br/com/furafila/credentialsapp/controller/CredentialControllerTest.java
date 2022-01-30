@@ -15,12 +15,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,14 +36,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.furafila.credentialsapp.dto.CourierDTO;
 import br.com.furafila.credentialsapp.request.NewCredentialRequest;
 import br.com.furafila.credentialsapp.response.CouriersResponse;
 import br.com.furafila.credentialsapp.response.CredentialDuplicityResponse;
+import br.com.furafila.credentialsapp.response.ErrorResponse;
 import br.com.furafila.credentialsapp.response.NewLoginResponse;
 import br.com.furafila.credentialsapp.service.CredentialsService;
+import br.com.furafila.credentialsapp.util.Messages;
 import br.com.furafila.credentialsapp.util.ReplaceCamelCase;
 
 @ExtendWith(SpringExtension.class)
@@ -48,9 +55,9 @@ import br.com.furafila.credentialsapp.util.ReplaceCamelCase;
 @DisplayNameGeneration(ReplaceCamelCase.class)
 public class CredentialControllerTest {
 
-	private static final String CREDENTIAL_URL = "/credential";
-	private static final String CREDENTIAL__DUPLICITY_URL = CREDENTIAL_URL.concat("/id/{id}/username/{username}");
-	private static final String LIST_COURIERS_URL = CREDENTIAL_URL.concat("/couriers");
+	private static final String CREDENTIAL_PATH = "/credential";
+	private static final String CREDENTIAL__DUPLICITY_URL = CREDENTIAL_PATH.concat("/id/{id}/username/{username}");
+	private static final String LIST_COURIERS_URL = CREDENTIAL_PATH.concat("/couriers");
 
 	@MockBean
 	private CredentialsService credentialsService;
@@ -60,6 +67,15 @@ public class CredentialControllerTest {
 
 	@Autowired
 	private ObjectMapper mapper;
+
+	private NewCredentialRequest newCredentialRequest;
+
+	@BeforeEach
+	public void setup() throws StreamReadException, DatabindException, IOException {
+		newCredentialRequest = mapper.readValue(
+				Paths.get("src", "test", "resources", "NewCredentialRequest.json").toFile(),
+				NewCredentialRequest.class);
+	}
 
 	@Test
 	public void shouldCheckCredentialsDuplicity() throws Exception {
@@ -101,10 +117,9 @@ public class CredentialControllerTest {
 		long id = 654l;
 		when(credentialsService.saveCredential(any())).thenReturn(id);
 
-		NewCredentialRequest newCredentialRequest = new NewCredentialRequest();
 		String json = mapper.writeValueAsString(newCredentialRequest);
 
-		MvcResult result = mockMvc.perform(post(CREDENTIAL_URL).contentType(MediaType.APPLICATION_JSON).content(json))
+		MvcResult result = mockMvc.perform(post(CREDENTIAL_PATH).contentType(MediaType.APPLICATION_JSON).content(json))
 				.andExpect(status().isOk()).andReturn();
 
 		NewLoginResponse newLoginResponse = mapper.readValue(result.getResponse().getContentAsString(),
@@ -120,10 +135,105 @@ public class CredentialControllerTest {
 
 		doThrow(new RuntimeException("TESTE ERRO")).when(credentialsService).saveCredential(any());
 
-		String json = mapper.writeValueAsString(new NewCredentialRequest());
+		String json = mapper.writeValueAsString(newCredentialRequest);
 
-		mockMvc.perform(post(CREDENTIAL_URL).contentType(MediaType.APPLICATION_JSON).content(json))
+		mockMvc.perform(post(CREDENTIAL_PATH).contentType(MediaType.APPLICATION_JSON).content(json))
 				.andExpect(status().isInternalServerError());
+
+	}
+
+	@Test
+	public void shouldNotSaveCredentialBecauseCredencialInfoIsRequired() throws Exception {
+
+		newCredentialRequest.setNewCredentialDTO(null);
+
+		testCustomerFieldsValidation(newCredentialRequest, Messages.CREDENTIAL_INFO_IS_REQUIRED);
+
+	}
+
+	@Test
+	public void shouldNotSaveCredentialBecauseUsernameIsRequired() throws Exception {
+
+		newCredentialRequest.getNewCredentialDTO().setUsername(null);
+
+		testCustomerFieldsValidation(newCredentialRequest, Messages.USERNAME_IS_REQUIRED);
+
+	}
+
+	@Test
+	public void shouldNotSaveCredentialBecauseUsernameIsNotValid() throws Exception {
+
+		newCredentialRequest.getNewCredentialDTO().setUsername("asd");
+
+		testCustomerFieldsValidation(newCredentialRequest, Messages.USERNAME_LENGTH_IS_NOT_VALID);
+
+	}
+
+	@Test
+	public void shouldNotSaveCredentialBecausePasswordIsRequired() throws Exception {
+
+		newCredentialRequest.getNewCredentialDTO().setPassword("");
+
+		testCustomerFieldsValidation(newCredentialRequest, Messages.PASSWORD_IS_REQUIRED);
+
+	}
+	
+	@Test
+	public void shouldNotSaveCredentialBecausePasswordIsNotValid() throws Exception {
+
+		newCredentialRequest.getNewCredentialDTO().setPassword("aa");
+
+		testCustomerFieldsValidation(newCredentialRequest, Messages.PASSWORD_LENGTH_IS_NOT_VALID);
+
+	}
+	
+	@Test
+	public void shouldNotSaveCredentialBecauseStatusIsRequired() throws Exception {
+
+		newCredentialRequest.getNewCredentialDTO().setStatus(null);
+
+		testCustomerFieldsValidation(newCredentialRequest, Messages.STATUS_IS_REQUIRED);
+
+	}
+	
+	@Test
+	public void shouldNotSaveCredentialBecauseDeliveryAvailableIsRequired() throws Exception {
+
+		newCredentialRequest.getNewCredentialDTO().setDeliveryAvailable(null);
+
+		testCustomerFieldsValidation(newCredentialRequest, Messages.DELIVERY_AVAILABLE_IS_REQUIRED);
+
+	}
+	
+	@Test
+	public void shouldNotSaveCredentialBecauseLevelIdIsRequired() throws Exception {
+
+		newCredentialRequest.getNewCredentialDTO().setLevelId(null);
+
+		testCustomerFieldsValidation(newCredentialRequest, Messages.LEVEL_ID_IS_REQUIRED);
+
+	}
+	
+	@Test
+	public void shouldNotSaveCredentialBecauseLevelIdIsNotValid() throws Exception {
+
+		newCredentialRequest.getNewCredentialDTO().setLevelId(0l);
+
+		testCustomerFieldsValidation(newCredentialRequest, Messages.LEVEL_ID_IS_NOT_VALID);
+
+	}
+
+	private void testCustomerFieldsValidation(NewCredentialRequest newCredentialRequest, String comparisonMessage)
+			throws Exception {
+
+		MvcResult result = mockMvc
+				.perform(post(CREDENTIAL_PATH).contentType(MediaType.APPLICATION_JSON)
+						.content(mapper.writeValueAsString(newCredentialRequest)))
+				.andExpect(status().isBadRequest()).andReturn();
+
+		ErrorResponse errorResponse = mapper.readValue(result.getResponse().getContentAsString(), ErrorResponse.class);
+
+		assertThat(errorResponse.getMessage(), equalTo(comparisonMessage));
 
 	}
 
