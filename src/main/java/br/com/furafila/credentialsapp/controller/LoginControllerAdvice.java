@@ -1,5 +1,7 @@
 package br.com.furafila.credentialsapp.controller;
 
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -42,9 +44,10 @@ public class LoginControllerAdvice {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException maEx) {
 
+		String rejectedValue = maEx.getBindingResult().getFieldErrors().stream().filter(Objects::nonNull).findFirst()
+				.map(item -> String.valueOf(item.getRejectedValue())).orElseGet(() -> "");
 		String defaultMessage = maEx.getBindingResult().getFieldError().getDefaultMessage();
-		logger.error(defaultMessage, maEx.getBindingResult().getFieldError());
-
+		logger.error("{} - Value: {}", defaultMessage, rejectedValue);
 		return ResponseEntity.badRequest().body(new ErrorResponse(defaultMessage));
 	}
 
