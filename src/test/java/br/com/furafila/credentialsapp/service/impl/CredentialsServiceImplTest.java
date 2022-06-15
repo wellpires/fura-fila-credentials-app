@@ -5,9 +5,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import br.com.furafila.credentialsapp.dto.CourierDTO;
 import br.com.furafila.credentialsapp.dto.CredentialDTO;
+import br.com.furafila.credentialsapp.dto.EditCredentialDTO;
 import br.com.furafila.credentialsapp.dto.NewCredentialDTO;
 import br.com.furafila.credentialsapp.exception.CredentialNotAuthorizedException;
 import br.com.furafila.credentialsapp.exception.CredentialsNotFoundException;
@@ -253,6 +258,68 @@ public class CredentialsServiceImplTest {
 		assertThat(loginCaptor.getPermissao().getId(), equalTo(newCredentialDTO.getLevelId()));
 
 		assertThat(idCredential, equalTo(idLogin));
+
+	}
+
+	@Test
+	public void shouldEditCredential() {
+
+		Login login = new Login();
+		when(credentialsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(login));
+
+		EditCredentialDTO editCredentialDTO = new EditCredentialDTO();
+		editCredentialDTO.setUsername("username 1");
+		editCredentialDTO.setPassword("123321");
+		credentialsService.editCredential(12L, editCredentialDTO);
+
+		ArgumentCaptor<Login> captor = ArgumentCaptor.forClass(Login.class);
+		verify(credentialsRepository).save(captor.capture());
+		Login loginCaptor = captor.getValue();
+
+		assertThat(loginCaptor.getUsername(), equalTo(editCredentialDTO.getUsername()));
+		assertThat(loginCaptor.getPassword(), equalTo(editCredentialDTO.getPassword()));
+
+	}
+
+	@Test
+	public void shouldNotEditCredentialBecauseCredentialNotFound() {
+
+		when(credentialsRepository.findById(anyLong())).thenThrow(new CredentialsNotFoundException());
+
+		EditCredentialDTO editCredentialDTO = new EditCredentialDTO();
+		editCredentialDTO.setUsername("username 1");
+		editCredentialDTO.setPassword("123321");
+
+		assertThrows(CredentialsNotFoundException.class, () -> {
+			credentialsService.editCredential(12L, editCredentialDTO);
+		});
+
+		verify(credentialsRepository, never()).save(any());
+
+	}
+
+	@Test
+	public void shouldDeleteCredential() {
+
+		Login login = new Login();
+		when(credentialsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(login));
+
+		credentialsService.deleteCredential(123l);
+
+		verify(credentialsRepository, times(1)).delete(any());
+
+	}
+
+	@Test
+	public void shouldNotDeleteCredentialBecauseCredentialNotFound() {
+
+		when(credentialsRepository.findById(anyLong())).thenThrow(new CredentialsNotFoundException());
+
+		assertThrows(CredentialsNotFoundException.class, () -> {
+			credentialsService.deleteCredential(123l);
+		});
+
+		verify(credentialsRepository, never()).delete(any());
 
 	}
 

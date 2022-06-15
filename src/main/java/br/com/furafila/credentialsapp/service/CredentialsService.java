@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.furafila.credentialsapp.dto.CourierDTO;
 import br.com.furafila.credentialsapp.dto.CredentialDTO;
+import br.com.furafila.credentialsapp.dto.EditCredentialDTO;
 import br.com.furafila.credentialsapp.dto.NewCredentialDTO;
 
 public interface CredentialsService {
@@ -15,5 +16,9 @@ public interface CredentialsService {
 	public List<CourierDTO> listAllCouriers();
 
 	public Long saveCredential(NewCredentialDTO newCredentialDTO);
-	
+
+	public void editCredential(Long loginId, EditCredentialDTO editCredentialDTO);
+
+	public void deleteCredential(Long loginId);
+
 }

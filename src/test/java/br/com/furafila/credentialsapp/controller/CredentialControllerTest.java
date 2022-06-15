@@ -10,9 +10,15 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
@@ -41,6 +47,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.furafila.credentialsapp.dto.CourierDTO;
+import br.com.furafila.credentialsapp.request.EditCredentialRequest;
 import br.com.furafila.credentialsapp.request.NewCredentialRequest;
 import br.com.furafila.credentialsapp.response.CouriersResponse;
 import br.com.furafila.credentialsapp.response.CredentialDuplicityResponse;
@@ -58,6 +65,8 @@ public class CredentialControllerTest {
 	private static final String CREDENTIAL_PATH = "/credential";
 	private static final String CREDENTIAL__DUPLICITY_URL = CREDENTIAL_PATH.concat("/id/{id}/username/{username}");
 	private static final String LIST_COURIERS_URL = CREDENTIAL_PATH.concat("/couriers");
+	private static final String EDIT_CREDENTIAL_PATH = CREDENTIAL_PATH.concat("/{loginId}");
+	private static final String DELETE_CREDENTIAL_PATH = CREDENTIAL_PATH.concat("/{loginId}");
 
 	@MockBean
 	private CredentialsService credentialsService;
@@ -69,12 +78,18 @@ public class CredentialControllerTest {
 	private ObjectMapper mapper;
 
 	private NewCredentialRequest newCredentialRequest;
+	private EditCredentialRequest editCredentialRequest;
 
 	@BeforeEach
 	public void setup() throws StreamReadException, DatabindException, IOException {
 		newCredentialRequest = mapper.readValue(
 				Paths.get("src", "test", "resources", "NewCredentialRequest.json").toFile(),
 				NewCredentialRequest.class);
+
+		editCredentialRequest = mapper.readValue(
+				Paths.get("src", "test", "resources", "NewCredentialRequest.json").toFile(),
+				EditCredentialRequest.class);
+
 	}
 
 	@Test
@@ -177,7 +192,7 @@ public class CredentialControllerTest {
 		testCustomerFieldsValidation(newCredentialRequest, Messages.PASSWORD_IS_REQUIRED);
 
 	}
-	
+
 	@Test
 	public void shouldNotSaveCredentialBecausePasswordIsNotValid() throws Exception {
 
@@ -186,7 +201,7 @@ public class CredentialControllerTest {
 		testCustomerFieldsValidation(newCredentialRequest, Messages.PASSWORD_LENGTH_IS_NOT_VALID);
 
 	}
-	
+
 	@Test
 	public void shouldNotSaveCredentialBecauseStatusIsRequired() throws Exception {
 
@@ -195,7 +210,7 @@ public class CredentialControllerTest {
 		testCustomerFieldsValidation(newCredentialRequest, Messages.STATUS_IS_REQUIRED);
 
 	}
-	
+
 	@Test
 	public void shouldNotSaveCredentialBecauseDeliveryAvailableIsRequired() throws Exception {
 
@@ -204,7 +219,7 @@ public class CredentialControllerTest {
 		testCustomerFieldsValidation(newCredentialRequest, Messages.DELIVERY_AVAILABLE_IS_REQUIRED);
 
 	}
-	
+
 	@Test
 	public void shouldNotSaveCredentialBecauseLevelIdIsRequired() throws Exception {
 
@@ -213,7 +228,7 @@ public class CredentialControllerTest {
 		testCustomerFieldsValidation(newCredentialRequest, Messages.LEVEL_ID_IS_REQUIRED);
 
 	}
-	
+
 	@Test
 	public void shouldNotSaveCredentialBecauseLevelIdIsNotValid() throws Exception {
 
@@ -234,6 +249,120 @@ public class CredentialControllerTest {
 		ErrorResponse errorResponse = mapper.readValue(result.getResponse().getContentAsString(), ErrorResponse.class);
 
 		assertThat(errorResponse.getMessage(), equalTo(comparisonMessage));
+
+	}
+
+	@Test
+	public void shouldEditCredential() throws Exception {
+
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("loginId", 123);
+
+		String path = UriComponentsBuilder.fromPath(EDIT_CREDENTIAL_PATH).buildAndExpand(param).toUriString();
+
+		mockMvc.perform(put(path).content(mapper.writeValueAsString(editCredentialRequest))
+				.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isNoContent()).andDo(print());
+
+		verify(credentialsService, times(1)).editCredential(anyLong(), any());
+
+	}
+
+	@Test
+	public void shouldNotEditCredentialBecauseCredentialInfoRequired() throws Exception {
+
+		editCredentialRequest.setEditCredentialDTO(null);
+
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("loginId", 123);
+
+		String path = UriComponentsBuilder.fromPath(EDIT_CREDENTIAL_PATH).buildAndExpand(param).toUriString();
+
+		mockMvc.perform(put(path).content(mapper.writeValueAsString(editCredentialRequest))
+				.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest()).andDo(print());
+
+		verify(credentialsService, never()).editCredential(anyLong(), any());
+
+	}
+
+	@Test
+	public void shouldNotEditCredentialBecauseUsernameRequired() throws Exception {
+
+		editCredentialRequest.getEditCredentialDTO().setUsername(null);
+
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("loginId", 123);
+
+		String path = UriComponentsBuilder.fromPath(EDIT_CREDENTIAL_PATH).buildAndExpand(param).toUriString();
+
+		mockMvc.perform(put(path).content(mapper.writeValueAsString(editCredentialRequest))
+				.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest()).andDo(print());
+
+		verify(credentialsService, never()).editCredential(anyLong(), any());
+
+	}
+
+	@Test
+	public void shouldNotEditCredentialBecauseUsernameNotValid() throws Exception {
+
+		editCredentialRequest.getEditCredentialDTO().setUsername("aaa");
+
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("loginId", 123);
+
+		String path = UriComponentsBuilder.fromPath(EDIT_CREDENTIAL_PATH).buildAndExpand(param).toUriString();
+
+		mockMvc.perform(put(path).content(mapper.writeValueAsString(editCredentialRequest))
+				.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest()).andDo(print());
+
+		verify(credentialsService, never()).editCredential(anyLong(), any());
+
+	}
+
+	@Test
+	public void shouldNotEditCredentialBecausePasswordRequired() throws Exception {
+
+		editCredentialRequest.getEditCredentialDTO().setPassword(null);
+
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("loginId", 123);
+
+		String path = UriComponentsBuilder.fromPath(EDIT_CREDENTIAL_PATH).buildAndExpand(param).toUriString();
+
+		mockMvc.perform(put(path).content(mapper.writeValueAsString(editCredentialRequest))
+				.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest()).andDo(print());
+
+		verify(credentialsService, never()).editCredential(anyLong(), any());
+
+	}
+
+	@Test
+	public void shouldNotEditCredentialBecausePasswordNotValid() throws Exception {
+
+		editCredentialRequest.getEditCredentialDTO().setPassword("as");
+
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("loginId", 123);
+
+		String path = UriComponentsBuilder.fromPath(EDIT_CREDENTIAL_PATH).buildAndExpand(param).toUriString();
+
+		mockMvc.perform(put(path).content(mapper.writeValueAsString(editCredentialRequest))
+				.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest()).andDo(print());
+
+		verify(credentialsService, never()).editCredential(anyLong(), any());
+
+	}
+
+	@Test
+	public void shouldDeleteCredential() throws Exception {
+
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("loginId", 123);
+
+		String path = UriComponentsBuilder.fromPath(DELETE_CREDENTIAL_PATH).buildAndExpand(param).toUriString();
+
+		mockMvc.perform(delete(path)).andExpect(status().isNoContent()).andDo(print());
+
+		verify(credentialsService, times(1)).deleteCredential(anyLong());
 
 	}
 
