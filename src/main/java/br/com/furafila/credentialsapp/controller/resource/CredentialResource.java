@@ -21,4 +21,8 @@ public interface CredentialResource {
 
 	public ResponseEntity<Void> deleteCredential(Long loginId);
 
+	public ResponseEntity<Void> toggleCourierStatus(Long loginId);
+
+	public ResponseEntity<Void> toggleCourierAvailability(Long loginId);
+
 }

@@ -67,6 +67,8 @@ public class CredentialControllerTest {
 	private static final String LIST_COURIERS_URL = CREDENTIAL_PATH.concat("/couriers");
 	private static final String EDIT_CREDENTIAL_PATH = CREDENTIAL_PATH.concat("/{loginId}");
 	private static final String DELETE_CREDENTIAL_PATH = CREDENTIAL_PATH.concat("/{loginId}");
+	private static final String TOGGLE_COURIER_STATUS = CREDENTIAL_PATH.concat("/couriers/{loginId}");
+	private static final String TOGGLE_COURIER_AVAILABILITY = CREDENTIAL_PATH.concat("/couriers/{loginId}");
 
 	@MockBean
 	private CredentialsService credentialsService;
@@ -363,6 +365,32 @@ public class CredentialControllerTest {
 		mockMvc.perform(delete(path)).andExpect(status().isNoContent()).andDo(print());
 
 		verify(credentialsService, times(1)).deleteCredential(anyLong());
+
+	}
+
+	@Test
+	public void shouldToggleCourierStatus() throws Exception {
+
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("loginId", 123);
+		String path = UriComponentsBuilder.fromPath(TOGGLE_COURIER_STATUS).buildAndExpand(param).toUriString();
+
+		mockMvc.perform(delete(path)).andExpect(status().isNoContent()).andDo(print());
+
+		verify(credentialsService, times(1)).toggleCourierStatus(anyLong());
+
+	}
+
+	@Test
+	public void shouldToggleCourierAvailability() throws Exception {
+
+		HashMap<String, Object> param = new HashMap<>();
+		param.put("loginId", 123);
+		String path = UriComponentsBuilder.fromPath(TOGGLE_COURIER_AVAILABILITY).buildAndExpand(param).toUriString();
+
+		mockMvc.perform(put(path)).andExpect(status().isNoContent()).andDo(print());
+
+		verify(credentialsService, times(1)).toggleCourierAvailability(anyLong());
 
 	}
 

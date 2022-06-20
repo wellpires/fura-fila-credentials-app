@@ -21,4 +21,8 @@ public interface CredentialsService {
 
 	public void deleteCredential(Long loginId);
 
+	public void toggleCourierStatus(Long loginId);
+
+	public void toggleCourierAvailability(Long loginId);
+
 }

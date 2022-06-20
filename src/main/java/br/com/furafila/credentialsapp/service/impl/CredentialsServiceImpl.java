@@ -110,4 +110,25 @@ public class CredentialsServiceImpl implements CredentialsService {
 		credentialsRepository.delete(login);
 	}
 
+	@Override
+	public void toggleCourierStatus(Long loginId) {
+
+		Login login = credentialsRepository.findById(loginId).orElseThrow(CredentialsNotFoundException::new);
+
+		login.setStatus(!login.getStatus());
+
+		credentialsRepository.save(login);
+
+	}
+
+	@Override
+	public void toggleCourierAvailability(Long loginId) {
+
+		Login login = credentialsRepository.findById(loginId).orElseThrow(CredentialsNotFoundException::new);
+
+		login.setDeliveryAvailable(!login.getDeliveryAvailable());
+
+		credentialsRepository.save(login);
+	}
+
 }

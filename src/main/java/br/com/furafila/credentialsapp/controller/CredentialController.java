@@ -82,4 +82,23 @@ public class CredentialController implements CredentialResource {
 		return ResponseEntity.noContent().build();
 	}
 
+	@Override
+	@DeleteMapping(path = "/couriers/{loginId}")
+	public ResponseEntity<Void> toggleCourierStatus(@PathVariable("loginId") Long loginId) {
+
+		credentialsService.toggleCourierStatus(loginId);
+
+		return ResponseEntity.noContent().build();
+	}
+
+	// TODO CHANGE TO PATCH
+	@Override
+	@PutMapping(path = "/couriers/{loginId}")
+	public ResponseEntity<Void> toggleCourierAvailability(@PathVariable("loginId") Long loginId) {
+
+		credentialsService.toggleCourierAvailability(loginId);
+
+		return ResponseEntity.noContent().build();
+	}
+
 }

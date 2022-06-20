@@ -323,4 +323,104 @@ public class CredentialsServiceImplTest {
 
 	}
 
+	@Test
+	public void shouldToggleCourierStatusToFalse() {
+
+		Login login = new Login();
+		login.setStatus(Boolean.TRUE);
+		when(credentialsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(login));
+
+		credentialsService.toggleCourierStatus(10l);
+
+		ArgumentCaptor<Login> loginCaptor = ArgumentCaptor.forClass(Login.class);
+		verify(credentialsRepository).save(loginCaptor.capture());
+
+		Login loginCaught = loginCaptor.getValue();
+
+		assertFalse(loginCaught.getStatus());
+
+	}
+
+	@Test
+	public void shouldToggleCourierStatusToTrue() {
+
+		Login login = new Login();
+		login.setStatus(Boolean.FALSE);
+		when(credentialsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(login));
+
+		credentialsService.toggleCourierStatus(10l);
+
+		ArgumentCaptor<Login> loginCaptor = ArgumentCaptor.forClass(Login.class);
+		verify(credentialsRepository).save(loginCaptor.capture());
+
+		Login loginCaught = loginCaptor.getValue();
+
+		assertTrue(loginCaught.getStatus());
+
+	}
+
+	@Test
+	public void shouldTNotoggleCourierStatusBecauseCredentialsNotFound() {
+
+		Login login = null;
+		when(credentialsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(login));
+
+		assertThrows(CredentialsNotFoundException.class, () -> {
+			credentialsService.toggleCourierStatus(10l);
+		});
+
+		verify(credentialsRepository, never()).save(any(Login.class));
+
+	}
+
+	@Test
+	public void shouldToggleCourierAvailabilityToFalse() {
+
+		Login login = new Login();
+		login.setDeliveryAvailable(Boolean.TRUE);
+		when(credentialsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(login));
+
+		credentialsService.toggleCourierAvailability(10l);
+
+		ArgumentCaptor<Login> loginCaptor = ArgumentCaptor.forClass(Login.class);
+		verify(credentialsRepository).save(loginCaptor.capture());
+
+		Login loginCaught = loginCaptor.getValue();
+
+		assertFalse(loginCaught.getDeliveryAvailable());
+
+	}
+
+	@Test
+	public void shouldToggleCourierAvailabilityToTrue() {
+
+		Login login = new Login();
+		login.setDeliveryAvailable(Boolean.FALSE);
+		when(credentialsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(login));
+
+		credentialsService.toggleCourierAvailability(10l);
+
+		ArgumentCaptor<Login> loginCaptor = ArgumentCaptor.forClass(Login.class);
+		verify(credentialsRepository).save(loginCaptor.capture());
+
+		Login loginCaught = loginCaptor.getValue();
+
+		assertTrue(loginCaught.getDeliveryAvailable());
+
+	}
+
+	@Test
+	public void shouldNotToggleCourierAvailabilityBecauseCredentialsNotFound() {
+
+		Login login = null;
+		when(credentialsRepository.findById(anyLong())).thenReturn(Optional.ofNullable(login));
+
+		assertThrows(CredentialsNotFoundException.class, () -> {
+			credentialsService.toggleCourierAvailability(10l);
+		});
+
+		verify(credentialsRepository, never()).save(any(Login.class));
+
+	}
+
 }
